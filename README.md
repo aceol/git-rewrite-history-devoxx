@@ -19,7 +19,7 @@ On peut dérouler en appuyant sur "Entrée" entre chaque commande.
 Les étapes sous vi sont à faire manuellement (edition de message de commit et rebase interactif). Les actions manuelles sont en commentaires dans le scripts
 
 ```sh
-./rewite-history-pres.sh
+./rewrite-history-pres.sh
 ```
 
 ## Author
