@@ -1,0 +1,4 @@
+.vscode
+start.sh
+tests/
+demo-magic.sh
