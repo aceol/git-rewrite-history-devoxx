@@ -5,9 +5,25 @@
 ########################
 . demo-magic.sh
 cd workspace
-rm -rf .git glasses sugar slippers milk
+rm -rf .git fraises.ml fondant.gr luminyen-poulet.fr luminyen-omelette.no test_fail.sh test_success.sh
 
-GREEN='\033[0;32m'
+########################
+# amend
+# - amend -m
+# - amend tout court
+# reflog
+# - reflog sur un commit
+# - reflog sur une branche
+# - rebase
+# - reflog sur un rebase
+# rebase interactif
+# - rename
+# - drop
+# - squash/fixup
+# - edit
+# - exec
+########################
+
 CYAN='\033[0;36m'
 PURPLE='\033[0;35m'
 LIGHT_RED='\033[0;33m'
@@ -22,7 +38,7 @@ function pep(){
 
 function prompt () {
     BRANCH=$(git branch --show-current)
-    DEMO_PROMPT="${PREFIX_PROMPT} git:(${LIGHT_RED}${BRANCH:=detached}${PURPLE})${NC} ✗ "
+    DEMO_PROMPT="${PREFIX_PROMPT} git:(${LIGHT_RED}${BRANCH:=detached}${PURPLE})${NC} ➤ "
 }
 
 DEMO_PROMPT="${PREFIX_PROMPT} "
@@ -32,75 +48,63 @@ clear
 
 pe "git init --quiet"
 pep "git branch -m main"                                         # optionnel
-pep "export GIT_PAGER=cat"                                       # optionnel
+pep "export GIT_PAGER=\"less -F\""                               # optionnel cat/more
 
 pep "git add .gitignore"                                         # permet d'avoir un workspace clean pendant la demo
-pep "git commit -m \":tada: Reveil en fanfare (first)\""
-pep "git commit --allow-empty -m \"Je me leve!\""
-pep "touch glasses && git add glasses"
-pep "git commit --amend "                                        # message: "Je me leve et je vois bien!
+pep "git commit -m \":tada: Je me reveille à Paris\""
+pep "git commit --amend --allow-empty -m \"Je me reveille à Marseille\""
+pep "git commit --amend --allow-empty"                           # message: "Je me reveille aux Goudes!
+pep "git log --pretty=oneline --abbrev-commit"
+pep "git log --walk-reflogs --pretty=oneline --abbrev-commit"    # on affiche ici les reflogs
+pep "git reflog"                                                 # même résultat
+pep "git reset HEAD@{1}"
 pep "git show HEAD~0"
-
-pep "git commit --allow-empty -m \"Je pars à la cuisine\""
-pep "echo \"Guybrush Threepwood\" > slippers"
-pep "git add slippers"
-pep "git commit --amend -m \"Je pars à la cuisine en chaussons\""
-pep "git show HEAD~0"
-
-pep "echo \"Purple Tentacle\" > slippers"
-pep "git commit -a --amend --no-edit"
-pep "git show HEAD~0"
-pep "git show HEAD~1"
-
-pep "git log --walk-reflogs --pretty=oneline --abbrev-commit"
-pep "git reflog"                                               # même résultat
-
-pep "git show HEAD@{0}"
-pep "git show HEAD@{1}"
-pep "git reset --soft HEAD@{1}"
-pep "git show HEAD~0"
-pep "cat slippers"
-pep "git reset --hard HEAD@{0}"
-
 # on peut voir le reflog par branche
-pep "git switch -C dejeuner"
-pep "git commit --allow-empty -m \"Un commit de p'tit dejeuner!\""
+pep "git switch -C preparer-mon-sac"
+pep "git commit --allow-empty -m \"je prends mon sac\""
+pep "git commit --allow-empty -m \"je prends mes lunettes\""
+pep "git commit --allow-empty -m \"je prends ma serviette de plage\""
 pep "git reflog"
-
-pep "git reflog show dejeuner"
-pep "git reflog show main"                                     # constater qu'on a pas le reflog de la branche dejeuner
-pep "git reflog show origin/main"                              # constater les pushs vers la branche (mais pas ici, on a pas de remote!)
-pep "git reset HEAD^"
-
+pep "git reflog show preparer-mon-sac"
+pep "git switch main"
+pep "git commit --allow-empty -m \"je sors du lit\""
+pep "git switch preparer-mon-sac"
+pep "git rebase main"
+pep "git reflog"
+pep "git reset HEAD@{12}"
+git switch -c "arrivee-dans-les-callanques" main
 # rebase interactif!
-pep "git commit --allow-empty -m \"Je me sert un café\""
-pep "git commit --allow-empty -m \"Je bois mon café\""
-pep "git commit --allow-empty -m \"Je met du sucre\""
-pep "git commit --allow-empty -m \"Je prends une tasse\""
-pep "git commit --allow-empty -m \"Je deguste en défilant slack\""
-
+pep "git commit --allow-empty -m \"je prends le bus 22\""
+pep "git commit --allow-empty -m \"je sors de chez moi\""
+pep "git commit --allow-empty -m \"je descend du bus\""
+pep "git commit --allow-empty -m \"je prends un sandwich\""
+pep "touch fraises.ml && git add fraises.ml"
+pep "git commit -m \"je prends un milk-shake\""
+pep "touch fondant.gr && git add fondant.gr"
+pep "git commit -m \"je prends un petit dessert\""
 pep "git log --pretty=oneline --abbrev-commit"
-pep "git rebase --interactive HEAD~4"
-# reword Je prends une tasse => au debut + rename mug
-# edit Je met du sucre ⬇️
-pep "touch sugar && git add sugar"
-pep "git rebase --continue"
-
-pep "git log --pretty=oneline --abbrev-commit"
-pep "touch milk && git add milk"
-pep "git commit -m \"avec du lait\""
-
+pep "git rebase --interactive HEAD~5 --autostash"
+# deplace "je sors de chez moi en premier!"
+# reword je prends le bus 22 => je prends le bus 21
+pep "touch luminyen-poulet.fr && git add luminyen-poulet.fr"
+pep "git commit -m \"ajout du sandwich poulet\""
 pep "git rebase --interactive main"
-# squash je me sert un cafe avec du sucre
-# fixup avec du lait => je bois mon café
-
-pep "echo \"aux amandes\" > milk"
-pep "git show HEAD~1"
-pep "git commit -a --fixup HEAD~1"
-pep "git rebase -i main"                                         # on ne fait rien ici (on le fera via l'autosquash)
-
-pep "git rebase -i main --autosquash"
-pep "git rebase -i main --exec ls"
-pep "git reflog --date=relative"
+# squash "ajout du sandwich" sur "je prends un sandwich"
+# drop milk-shake
+pep "mv luminyen-poulet.fr luminyen-omelette.no && git add luminyen-*"
+pep "git commit --fixup HEAD~1"
+pep "git rebase --interactive main --autosquash"
+# fixup "remplace poulet par omelette" sur "je prends un sandwich"
+pep "git rebase --interactive main"
+#  edit sur le premier
+#  add exec ./test_fail.sh sur "je prends le bus"
+#  add exec ./test_success.sh sur "je descend du bus"
+pep "cp ../test* . && chmod +x test* && git add test*"
+pep "git commit -m \"CI Ready\""
+# regarder le petit commit en plus!
+pep "git rebase --continue"
+pep "git rebase --edit-todo"
+pep "git rebase --continue"
+pep "echo \"allé, on débrief\""
 
 pep "echo bye"
